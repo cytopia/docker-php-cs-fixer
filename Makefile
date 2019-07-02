@@ -15,17 +15,35 @@ PHP = latest
 PCF = latest
 
 build:
+ifeq ($(PCF),1)
+ifeq ($(PHP),latest)
+	@# PHP CS Fixer version 1 goes only up to PHP 7.1
+	docker build --build-arg PHP=7.1-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+else
+	docker build --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+endif
+else
 ifeq ($(PHP),latest)
 	docker build --build-arg PHP=7-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
 else
 	docker build --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
 endif
+endif
 
 rebuild: pull
+ifeq ($(PCF),1)
 ifeq ($(PHP),latest)
-	docker build --no-cache --build-arg PHP=7-cli-alpine -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+	@# PHP CS Fixer version 1 goes only up to PHP 7.1
+	docker build --no-cache --build-arg PHP=7.1-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
 else
-	docker build --no-cache --build-arg PHP=$(PHP)-cli-alpine -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+	docker build --no-cache --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+endif
+else
+ifeq ($(PHP),latest)
+	docker build --no-cache --build-arg PHP=7-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+else
+	docker build --no-cache --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+endif
 endif
 
 lint:
@@ -73,7 +91,13 @@ _test-php-version:
 	@echo "------------------------------------------------------------"
 	@echo "- Testing correct PHP version"
 	@echo "------------------------------------------------------------"
-	@if [ "$(PHP)" = "latest" ]; then \
+	@if [ "$(PCF)" = "1" ] && [ "$(PHP)" = "latest" ]; then \
+		echo "Testing for tag: 7.1.x"; \
+		if ! docker run --rm --entrypoint=php $(IMAGE) --version | head -1 | grep -E "^PHP[[:space:]]+7\.1\.[.0-9]+[[:space:]]"; then \
+			echo "Failed"; \
+			exit 1; \
+		fi; \
+	elif [ "$(PHP)" = "latest" ]; then \
 		echo "Fetching latest version from GitHub"; \
 		LATEST="$$( \
 		curl -L -sS https://github.com/php/php-src/releases \
