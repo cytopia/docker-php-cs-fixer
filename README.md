@@ -71,7 +71,7 @@ Docker images for PHP Coding Standards Fixer come with all available PHP version
 #### Latest stable php-cs-fixer `1.x.x` version
 | Docker tag      | php-cs-fixer version         | PHP version           |
 |-----------------|-----------------------|-----------------------|
-| `1`             | latest stable `1.x.x` | latest stable         |
+| `1`             | latest stable `1.x.x` | latest stable supported version |
 | `1-php7.1`      | latest stable `1.x.x` | latest stable `7.1.x` |
 | `1-php7.0`      | latest stable `1.x.x` | latest stable `7.0.x` |
 | `1-php5.6`      | latest stable `1.x.x` | latest stable `5.6.x` |
