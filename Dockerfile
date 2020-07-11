@@ -14,7 +14,7 @@ ARG PCF
 RUN set -eux \
 	&& cd PHP-CS-Fixer \
 	&& if [ "${PCF}" = "latest" ]; then \
-		VERSION="$( git describe --abbrev=0 --tags )"; \
+		VERSION="$( git tag | sort -V | tail -1 )"; \
 	else \
 		VERSION="$( git tag | grep -E "^v?${PCF}\.[.0-9]+\$" | sort -V | tail -1 )"; \
 	fi \
