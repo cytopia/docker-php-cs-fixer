@@ -1,0 +1,166 @@
+name: Build and Push Docker images to Docker Hub
+
+on:
+  push:
+    branches: [ '**' ]
+    tags: [ '*' ]
+
+  schedule:
+    - cron: '0 0 * * *'
+
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  lint:
+    name: Lint
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint
+        run: make lint
+
+  build-1:
+    name: PCF1
+
+    needs: lint
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        PHP: [5.6, '7.0', 7.1]
+        PCF: [1]
+
+    steps:
+      - uses: actions/checkout@v2
+      - id: branch
+        run: echo ::set-output name=result::${GITHUB_REF#refs/heads/}
+      - uses: actions/github-script@v3
+        id: tag
+        with:
+          script: |
+            const ref = process.env.GITHUB_REF
+            if (!ref.startsWith("refs/tags/")) {
+              return ''
+            }
+            const tag = ref.replace(/^refs\/tags\//, "")
+            return tag
+          result-encoding: string
+      - name: Build on PHP ${{ matrix.PHP }}
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+        run: make build PCF=${PCF} PHP=${PHP}
+      - name: Test
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+        run: make test PCF=${PCF} PHP=${PHP}
+      - name: Push Docker image to Docker Hub
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+          TAG: ${{ steps.tag.outputs.result }}
+          BRANCH: ${{ steps.branch.outputs.result }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: bash ./push.sh
+  pcf2:
+    name: PCF2
+    needs: lint
+    continue-on-error: true
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        PHP: [5.6, '7.0', 7.1, 7.2, 7.3, 7.4, latest]
+        PCF: [2]
+
+    steps:
+      - uses: actions/checkout@v2
+      - id: branch
+        run: echo ::set-output name=result::${GITHUB_REF#refs/heads/}
+      - uses: actions/github-script@v3
+        id: tag
+        with:
+          script: |
+            const ref = process.env.GITHUB_REF
+            if (!ref.startsWith("refs/tags/")) {
+              return ''
+            }
+            const tag = ref.replace(/^refs\/tags\//, "")
+            return tag
+          result-encoding: string
+      - name: Build on PHP ${{ matrix.PHP }}
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+        run: make build PCF=${PCF} PHP=${PHP}
+      - name: Test
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+        run: make test PCF=${PCF} PHP=${PHP}
+      - name: Push Docker image to Docker Hub
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+          TAG: ${{ steps.tag.outputs.result }}
+          BRANCH: ${{ steps.branch.outputs.result }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: bash ./push.sh
+
+  build-pcf-latest:
+    name: PCF Latest
+    needs: lint
+    continue-on-error: true
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        PHP: [5.6, '7.0', 7.1, 7.2, 7.3, 7.4, latest]
+        PCF: [latest]
+
+    steps:
+      - uses: actions/checkout@v2
+      - id: branch
+        run: echo ::set-output name=result::${GITHUB_REF#refs/heads/}
+      - uses: actions/github-script@v3
+        id: tag
+        with:
+          script: |
+            const ref = process.env.GITHUB_REF
+            if (!ref.startsWith("refs/tags/")) {
+              return ''
+            }
+            const tag = ref.replace(/^refs\/tags\//, "")
+            return tag
+          result-encoding: string
+      - name: Build on PHP ${{ matrix.PHP }}
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+        run: make build PCF=${PCF} PHP=${PHP}
+      - name: Test
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+        run: make test PCF=${PCF} PHP=${PHP}
+      - name: Push Docker image to Docker Hub
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          PHP: ${{ matrix.PHP }}
+          PCF: ${{ matrix.PCF }}
+          TAG: ${{ steps.tag.outputs.result }}
+          BRANCH: ${{ steps.branch.outputs.result }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: bash ./push.sh
