@@ -2,8 +2,11 @@ ifneq (,)
 .error This Makefile requires GNU Make.
 endif
 
-.PHONY: build rebuild lint test _test-php-cs-fixer-version _test-php-version _test-run _get-php-version tag pull login push enter
+.PHONY: lint build rebuild test
 
+# --------------------------------------------------------------------------------------------------
+# VARIABLES
+# --------------------------------------------------------------------------------------------------
 CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 CURRENT_PHP_VERSION =
 
@@ -11,42 +14,31 @@ DIR = .
 FILE = Dockerfile
 IMAGE = cytopia/php-cs-fixer
 TAG = latest
+NO_CACHE =
 
 PHP = latest
 PCF = latest
 
-build:
-ifeq ($(PCF),1)
-ifeq ($(PHP),latest)
-	@# PHP CS Fixer version 1 goes only up to PHP 7.1
-	docker build --build-arg PHP=7.1-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-else
-	docker build --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-endif
-else
-ifeq ($(PHP),latest)
-	docker build --build-arg PHP=7-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-else
-	docker build --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-endif
-endif
+PHP_LATEST = $(shell \
+	while ! DATA="$$( curl -sS --fail 'https://github.com/docker-library/php' )"; do \
+		sleep 1; \
+	done; \
+	echo "$${DATA}" | grep -Eo 'php/tree/master/[.0-9]+"' | grep -Eo '[.0-9]+' | sort | tail -1 \
+)
 
-rebuild: pull
-ifeq ($(PCF),1)
-ifeq ($(PHP),latest)
-	@# PHP CS Fixer version 1 goes only up to PHP 7.1
-	docker build --no-cache --build-arg PHP=7.1-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-else
-	docker build --no-cache --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-endif
-else
-ifeq ($(PHP),latest)
-	docker build --no-cache --build-arg PHP=7-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-else
-	docker build --no-cache --build-arg PHP=$(PHP)-cli-alpine --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-endif
-endif
 
+# --------------------------------------------------------------------------------------------------
+# DEFAULT TARGET
+# --------------------------------------------------------------------------------------------------
+help:
+	@echo "lint                    Lint repository files"
+	@echo "build [PHP=] [PCF=]     Build image with PHP and PCF version"
+	@echo "test  [PHP=] [PCF=]     Test image with PHP and PCF version"
+
+
+# --------------------------------------------------------------------------------------------------
+# LINT TARGETS
+# --------------------------------------------------------------------------------------------------
 lint:
 	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-cr --text --ignore '.git/,.github/,tests/' --path .
 	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-crlf --text --ignore '.git/,.github/,tests/' --path .
@@ -55,11 +47,40 @@ lint:
 	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-utf8 --text --ignore '.git/,.github/,tests/' --path .
 	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-utf8-bom --text --ignore '.git/,.github/,tests/' --path .
 
+
+# --------------------------------------------------------------------------------------------------
+# BUILD TARGETS
+# --------------------------------------------------------------------------------------------------
+build:
+ifeq ($(PCF),1)
+ifeq ($(PHP),latest)
+	@# PHP CS Fixer version 1 goes only up to PHP 7.1
+	docker build $(NO_CACHE) --build-arg PHP=7.1 --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+else
+	docker build $(NO_CACHE) --build-arg PHP=$(PHP) --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+endif
+else
+ifeq ($(PHP),latest)
+	docker build $(NO_CACHE) --build-arg PHP=$(PHP_LATEST) --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+else
+	docker build $(NO_CACHE) --build-arg PHP=$(PHP) --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
+endif
+endif
+
+rebuild: _pull
+rebuild: NO_CACHE=--no-cache
+rebuild: build
+
+
+# --------------------------------------------------------------------------------------------------
+# TEST TARGETS
+# --------------------------------------------------------------------------------------------------
 test:
 	@$(MAKE) --no-print-directory _test-php-cs-fixer-version
 	@$(MAKE) --no-print-directory _test-php-version
 	@$(MAKE) --no-print-directory _test-run
 
+.PHONY: _test-php-cs-fixer-version
 _test-php-cs-fixer-version:
 	@echo "------------------------------------------------------------"
 	@echo "- Testing correct phpcs version"
@@ -88,6 +109,7 @@ _test-php-cs-fixer-version:
 	fi; \
 	echo "Success"; \
 
+.PHONY: _test-php-version
 _test-php-version: _get-php-version
 	@echo "------------------------------------------------------------"
 	@echo "- Testing correct PHP version"
@@ -107,6 +129,7 @@ _test-php-version: _get-php-version
 	fi; \
 	echo "Success"; \
 
+.PHONY: _test-run
 _test-run:
 	@echo "------------------------------------------------------------"
 	@echo "- Testing phpcs (success)"
@@ -125,45 +148,30 @@ _test-run:
 	fi; \
 	echo "Success";
 
-tag:
-	docker tag $(IMAGE) $(IMAGE):$(TAG)
 
-pull:
+# --------------------------------------------------------------------------------------------------
+# HELPER TARGETS
+# --------------------------------------------------------------------------------------------------
+.PHONY: _pull
+_pull:
 	@echo "Pull base image"
-	@grep -E '^\s*FROM' Dockerfile \
-		| sed -e 's/^FROM//g' -e 's/[[:space:]]*as[[:space:]]*.*$$//g' \
-		| head -1 \
-		| xargs -n1 docker pull;
-	@echo "Pull target image"
 ifeq ($(PCF),1)
 ifeq ($(PHP),latest)
 	@# PHP CS Fixer version 1 goes only up to PHP 7.1
-	docker pull php:7.1-cli-alpine
+	docker pull php:7.1
 else
 	docker pull php:$(PHP)-cli-alpine
 endif
 else
 ifeq ($(PHP),latest)
-	docker pull php:7-cli-alpine
+	docker pull php:$(PHP_LATEST)-cli-alpine
 else
 	docker pull php:$(PHP)-cli-alpine
 endif
 endif
 
-
-
-
-login:
-	yes | docker login --username $(USER) --password $(PASS)
-
-push:
-	@$(MAKE) tag TAG=$(TAG)
-	docker push $(IMAGE):$(TAG)
-
-enter:
-	docker run --rm --name $(subst /,-,$(IMAGE)) -it --entrypoint=/bin/sh $(ARG) $(IMAGE):$(TAG)
-
 # Fetch latest available PHP version for cli-alpine
+.PHONY: _get-php-version
 _get-php-version:
 	$(eval CURRENT_PHP_VERSION = $(shell \
 		if [ "$(PHP)" = "latest" ]; then \
@@ -177,3 +185,20 @@ _get-php-version:
 			echo $(PHP); \
 		fi; \
 	))
+
+
+# --------------------------------------------------------------------------------------------------
+# DEPLOY TARGETS
+# --------------------------------------------------------------------------------------------------
+.PHONY: tag
+tag:
+	docker tag $(IMAGE) $(IMAGE):$(TAG)
+
+.PHONY: login
+login:
+	yes | docker login --username $(USER) --password $(PASS)
+
+.PHONY: push
+push:
+	@$(MAKE) tag TAG=$(TAG)
+	docker push $(IMAGE):$(TAG)

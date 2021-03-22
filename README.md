@@ -1,6 +1,5 @@
 # Docker image for `php-cs-fixer`
 
-[![Build Status](https://travis-ci.com/cytopia/docker-php-cs-fixer.svg?branch=master)](https://travis-ci.com/cytopia/docker-php-cs-fixer)
 [![Tag](https://img.shields.io/github/tag/cytopia/docker-php-cs-fixer.svg)](https://github.com/cytopia/docker-php-cs-fixer/releases)
 [![](https://images.microbadger.com/badges/version/cytopia/php-cs-fixer:latest.svg?&kill_cache=1)](https://microbadger.com/images/cytopia/php-cs-fixer:latest "php-cs-fixer")
 [![](https://images.microbadger.com/badges/image/cytopia/php-cs-fixer:latest.svg?&kill_cache=1)](https://microbadger.com/images/cytopia/php-cs-fixer:latest "php-cs-fixer")
@@ -8,11 +7,16 @@
 [![](https://img.shields.io/badge/github-cytopia%2Fdocker--php--cs--fixer-red.svg)](https://github.com/cytopia/docker-php-cs-fixer "github.com/cytopia/docker-php-cs-fixer")
 [![License](https://img.shields.io/badge/license-MIT-%233DA639.svg)](https://opensource.org/licenses/MIT)
 
+[![lint](https://github.com/cytopia/docker-php-cs-fixer/workflows/lint/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Alint)
+[![build](https://github.com/cytopia/docker-php-cs-fixer/workflows/build/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Abuild)
+[![nightly](https://github.com/cytopia/docker-php-cs-fixer/workflows/nightly/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Anightly)
+
 > #### All [#awesome-ci](https://github.com/topics/awesome-ci) Docker images
 >
-> [ansible][ansible-git-lnk] **•**
 > [ansible-lint][alint-git-lnk] **•**
+> [ansible][ansible-git-lnk] **•**
 > [awesome-ci][aci-git-lnk] **•**
+> [bandit][bandit-git-lnk] **•**
 > [black][black-git-lnk] **•**
 > [checkmake][cm-git-lnk] **•**
 > [eslint][elint-git-lnk] **•**
@@ -23,16 +27,16 @@
 > [jsonlint][jlint-git-lnk] **•**
 > [linkcheck][linkcheck-git-lnk] **•**
 > [mypy][mypy-git-lnk] **•**
+> [php-cs-fixer][pcsf-git-lnk] **•**
 > [phpcbf][pcbf-git-lnk] **•**
 > [phpcs][pcs-git-lnk] **•**
 > [phplint][plint-git-lnk] **•**
-> [php-cs-fixer][pcsf-git-lnk] **•**
 > [pycodestyle][pycs-git-lnk] **•**
 > [pydocstyle][pyds-git-lnk] **•**
 > [pylint][pylint-git-lnk] **•**
 > [terraform-docs][tfdocs-git-lnk] **•**
-> [terragrunt][tg-git-lnk] **•**
 > [terragrunt-fmt][tgfmt-git-lnk] **•**
+> [terragrunt][tg-git-lnk] **•**
 > [yamlfmt][yfmt-git-lnk] **•**
 > [yamllint][ylint-git-lnk]
 
@@ -55,9 +59,11 @@ The image is built nightly against multiple stable versions and pushed to Docker
 Docker images for PHP Coding Standards Fixer come with all available PHP versions. In doubt use `latest` tag.
 
 #### Latest stable php-cs-fixer version
-| Docker tag      | php-cs-fixer version         | PHP version           |
+| Docker tag      | php-cs-fixer version  | PHP version           |
 |-----------------|-----------------------|-----------------------|
 | `latest`        | latest stable         | latest stable         |
+| `latest-php8.0` | latest stable         | latest stable `8.0.x` |
+| `latest-php7.4` | latest stable         | latest stable `7.4.x` |
 | `latest-php7.3` | latest stable         | latest stable `7.3.x` |
 | `latest-php7.2` | latest stable         | latest stable `7.2.x` |
 | `latest-php7.1` | latest stable         | latest stable `7.1.x` |
@@ -65,9 +71,11 @@ Docker images for PHP Coding Standards Fixer come with all available PHP version
 | `latest-php5.6` | latest stable         | latest stable `5.6.x` |
 
 #### Latest stable php-cs-fixer `2.x.x` version
-| Docker tag      | php-cs-fixer version         | PHP version           |
+| Docker tag      | php-cs-fixer version  | PHP version           |
 |-----------------|-----------------------|-----------------------|
 | `2`             | latest stable `2.x.x` | latest stable         |
+| `2-php8.0`      | latest stable `2.x.x` | latest stable `8.0.x` |
+| `2-php7.4`      | latest stable `2.x.x` | latest stable `7.4.x` |
 | `2-php7.3`      | latest stable `2.x.x` | latest stable `7.3.x` |
 | `2-php7.2`      | latest stable `2.x.x` | latest stable `7.2.x` |
 | `2-php7.1`      | latest stable `2.x.x` | latest stable `7.1.x` |
@@ -75,7 +83,7 @@ Docker images for PHP Coding Standards Fixer come with all available PHP version
 | `2-php5.6`      | latest stable `2.x.x` | latest stable `5.6.x` |
 
 #### Latest stable php-cs-fixer `1.x.x` version
-| Docker tag      | php-cs-fixer version         | PHP version           |
+| Docker tag      | php-cs-fixer version  | PHP version           |
 |-----------------|-----------------------|-----------------------|
 | `1`             | latest stable `1.x.x` | latest stable supported version |
 | `1-php7.1`      | latest stable `1.x.x` | latest stable `7.1.x` |
@@ -145,10 +153,7 @@ Using cache file ".php_cs.cache".
 +if (1 ==2) {
 +    echo "asd";
 +}
-
-
       ----------- end diff -----------
-
 
 Checked all files in 0.004 seconds, 10.000 MB memory used
 ```
@@ -226,6 +231,7 @@ linter below for reproducible local or remote CI tests:
 | [phpcs][pcs-git-lnk]             | [![pcs-hub-img]][pcs-hub-lnk]         | PHP        | PHP Code Sniffer |
 | [phplint][plint-git-lnk]         | [![plint-hub-img]][plint-hub-lnk]     | PHP        | PHP Code Linter **<sup>[1]</sup>** |
 | [php-cs-fixer][pcsf-git-lnk]     | [![pcsf-hub-img]][pcsf-hub-lnk]       | PHP        | PHP Coding Standards Fixer |
+| [bandit][bandit-git-lnk]         | [![bandit-hub-img]][bandit-hub-lnk]   | Python     | A security linter from PyCQA
 | [black][black-git-lnk]           | [![black-hub-img]][black-hub-lnk]     | Python     | The uncompromising Python code formatter |
 | [mypy][mypy-git-lnk]             | [![mypy-hub-img]][mypy-hub-lnk]       | Python     | Static source code analysis |
 | [pycodestyle][pycs-git-lnk]      | [![pycs-hub-img]][pycs-hub-lnk]       | Python     | Python style guide checker |
@@ -298,6 +304,10 @@ linter below for reproducible local or remote CI tests:
 [pcsf-git-lnk]: https://github.com/cytopia/docker-php-cs-fixer
 [pcsf-hub-img]: https://img.shields.io/docker/pulls/cytopia/php-cs-fixer.svg
 [pcsf-hub-lnk]: https://hub.docker.com/r/cytopia/php-cs-fixer
+
+[bandit-git-lnk]: https://github.com/cytopia/docker-bandit
+[bandit-hub-img]: https://img.shields.io/docker/pulls/cytopia/bandit.svg
+[bandit-hub-lnk]: https://hub.docker.com/r/cytopia/bandit
 
 [black-git-lnk]: https://github.com/cytopia/docker-black
 [black-hub-img]: https://img.shields.io/docker/pulls/cytopia/black.svg

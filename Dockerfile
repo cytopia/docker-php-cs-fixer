@@ -1,5 +1,5 @@
 ARG PHP
-FROM php:7.1 as builder
+FROM php:${PHP}-cli as builder
 
 # Install build dependencies
 RUN set -eux \
@@ -14,10 +14,11 @@ ARG PCF
 RUN set -eux \
 	&& cd PHP-CS-Fixer \
 	&& if [ "${PCF}" = "latest" ]; then \
-		VERSION="$( git tag | sort -V | tail -1 )"; \
+		VERSION="$( git tag | grep -E '^v?[.0-9]+$' | sort -V | tail -1 )"; \
 	else \
 		VERSION="$( git tag | grep -E "^v?${PCF}\.[.0-9]+\$" | sort -V | tail -1 )"; \
 	fi \
+	&& echo "Version: ${VERSION}" \
 	&& curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/${VERSION}/php-cs-fixer.phar -o /php-cs-fixer \
 	&& chmod +x /php-cs-fixer \
 	&& mv /php-cs-fixer /usr/bin/php-cs-fixer
@@ -26,7 +27,8 @@ RUN set -eux \
 	&& php-cs-fixer --version
 
 
-FROM php:${PHP} as production
+ARG PHP
+FROM php:${PHP}-cli-alpine as production
 LABEL \
 	maintainer="cytopia <cytopia@everythingcli.org>" \
 	repo="https://github.com/cytopia/docker-php-cs-fixer"
