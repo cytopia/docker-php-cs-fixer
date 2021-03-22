@@ -1,9 +1,11 @@
 ARG PHP
-FROM php:${PHP}-cli-alpine as builder
+FROM php:${PHP}-cli as builder
 
 # Install build dependencies
 RUN set -eux \
-	&& apk --no-cache add \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		ca-certificates \
 		curl \
 		git \
 	&& git clone https://github.com/FriendsOfPHP/PHP-CS-Fixer
