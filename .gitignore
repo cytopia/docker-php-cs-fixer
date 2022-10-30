@@ -1,1 +1,3 @@
-.php_cs.cache
+Makefile.docker
+Makefile.lint
+*.cache

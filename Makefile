@@ -2,107 +2,193 @@ ifneq (,)
 .error This Makefile requires GNU Make.
 endif
 
-.PHONY: lint build rebuild test
+# Ensure additional Makefiles are present
+MAKEFILES = Makefile.docker Makefile.lint
+$(MAKEFILES): URL=https://raw.githubusercontent.com/devilbox/makefiles/master/$(@)
+$(MAKEFILES):
+	@if ! (curl --fail -sS -o $(@) $(URL) || wget -O $(@) $(URL)); then \
+		echo "Error, curl or wget required."; \
+		echo "Exiting."; \
+		false; \
+	fi
+include $(MAKEFILES)
 
-# --------------------------------------------------------------------------------------------------
-# VARIABLES
-# --------------------------------------------------------------------------------------------------
-CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-CURRENT_PHP_VERSION =
+# Set default Target
+.DEFAULT_GOAL := help
 
-DIR = .
-FILE = Dockerfile
-IMAGE = cytopia/php-cs-fixer
+
+# -------------------------------------------------------------------------------------------------
+# Default configuration
+# -------------------------------------------------------------------------------------------------
+# Own vars
 TAG = latest
-NO_CACHE =
 
-PHP = latest
-PCF = latest
+# Makefile.docker overwrites
+NAME       = pcf
+VERSION    = latest
+IMAGE      = cytopia/php-cs-fixer
+FLAVOUR    = latest
+FILE       = Dockerfile.${FLAVOUR}
+DIR        = Dockerfiles
 
-PHP_LATEST = $(shell \
-	while ! DATA="$$( curl -sS --fail 'https://github.com/docker-library/php' )"; do \
-		sleep 1; \
-	done; \
-	echo "$${DATA}" | grep -Eo 'php/tree/master/[.0-9]+"' | grep -Eo '[.0-9]+' | sort | tail -1 \
-)
+# Extract PHP- and PCF- version from VERSION string
+ifeq ($(strip $(VERSION)),latest)
+	PHP_VERSION = latest
+	PCF_VERSION = latest
+else
+	PHP_VERSION = $(subst PHP-,,$(shell echo "$(VERSION)" | grep -Eo 'PHP-([.0-9]+|latest)'))
+	PCF_VERSION = $(subst PCF-,,$(shell echo "$(VERSION)" | grep -Eo 'PCF-([.0-9]+|latest)'))
+endif
+
+# Building from master branch: Tag == 'latest'
+ifeq ($(strip $(TAG)),latest)
+	ifeq ($(strip $(VERSION)),latest)
+		DOCKER_TAG = $(FLAVOUR)
+else
+		ifeq ($(strip $(FLAVOUR)),latest)
+			ifeq ($(strip $(PHP_VERSION)),latest)
+				DOCKER_TAG = $(PCF_VERSION)
+			else
+				DOCKER_TAG = $(PCF_VERSION)-php$(PHP_VERSION)
+endif
+else
+			ifeq ($(strip $(PHP_VERSION)),latest)
+				DOCKER_TAG = $(FLAVOUR)-$(PCF_VERSION)
+else
+				DOCKER_TAG = $(FLAVOUR)-$(PCF_VERSION)-php$(PHP_VERSION)
+			endif
+		endif
+endif
+# Building from any other branch or tag: Tag == '<REF>'
+else
+	ifeq ($(strip $(VERSION)),latest)
+		ifeq ($(strip $(FLAVOUR)),latest)
+			DOCKER_TAG = latest-$(TAG)
+		else
+			DOCKER_TAG = $(FLAVOUR)-latest-$(TAG)
+endif
+	else
+		ifeq ($(strip $(FLAVOUR)),latest)
+			ifeq ($(strip $(PHP_VERSION)),latest)
+				DOCKER_TAG = $(PCF_VERSION)-$(TAG)
+			else
+				DOCKER_TAG = $(PCF_VERSION)-php$(PHP_VERSION)-$(TAG)
+			endif
+		else
+			ifeq ($(strip $(PHP_VERSION)),latest)
+				DOCKER_TAG = $(FLAVOUR)-$(PCF_VERSION)-$(TAG)
+			else
+				DOCKER_TAG = $(FLAVOUR)-$(PCF_VERSION)-php$(PHP_VERSION)-$(TAG)
+			endif
+		endif
+	endif
+endif
+
+# Makefile.lint overwrites
+FL_IGNORES  = .git/,.github/,tests/
+SC_IGNORES  = .git/,.github/,tests/
+JL_IGNORES  = .git/,.github/,./tests/
+
+out:
+	@echo "PHP: $(subst PHP-,,$(shell echo "$(VERSION)" | grep -Eo 'PHP-[.0-9]+'))"
+	@echo "PCF: $(subst PCF-,,$(shell echo "$(VERSION)" | grep -Eo 'PCF-[.0-9]+'))"
 
 
-# --------------------------------------------------------------------------------------------------
-# DEFAULT TARGET
-# --------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+#  Default Target
+# -------------------------------------------------------------------------------------------------
+.PHONY: help
 help:
-	@echo "lint                    Lint repository files"
-	@echo "build [PHP=] [PCF=]     Build image with PHP and PCF version"
-	@echo "test  [PHP=] [PCF=]     Test image with PHP and PCF version"
+	@echo "lint                                     Lint project files and repository"
+	@echo
+	@echo "build [ARCH=...] [TAG=...]               Build Docker image"
+	@echo "rebuild [ARCH=...] [TAG=...]             Build Docker image without cache"
+	@echo "push [ARCH=...] [TAG=...]                Push Docker image to Docker hub"
+	@echo
+	@echo "manifest-create [ARCHES=...] [TAG=...]   Create multi-arch manifest"
+	@echo "manifest-push [TAG=...]                  Push multi-arch manifest"
+	@echo
+	@echo "test [ARCH=...]                          Test built Docker image"
+	@echo
 
 
-# --------------------------------------------------------------------------------------------------
-# LINT TARGETS
-# --------------------------------------------------------------------------------------------------
-lint:
-	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-cr --text --ignore '.git/,.github/,tests/' --path .
-	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-crlf --text --ignore '.git/,.github/,tests/' --path .
-	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-trailing-single-newline --text --ignore '.git/,.github/,tests/' --path .
-	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-trailing-space --text --ignore '.git/,.github/,tests/' --path .
-	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-utf8 --text --ignore '.git/,.github/,tests/' --path .
-	@docker run --rm -v $(CURRENT_DIR):/data cytopia/file-lint file-utf8-bom --text --ignore '.git/,.github/,tests/' --path .
+# -------------------------------------------------------------------------------------------------
+#  Target Overrides
+# -------------------------------------------------------------------------------------------------
+.PHONY: docker-pull-base-image
+docker-pull-base-image:
+	@echo "################################################################################"
+	@echo "# Pulling Base Image php:"$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )"cli (platform: $(ARCH))"
+	@echo "################################################################################"
+	@echo "docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli"; \
+	while ! docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli; do sleep 1; done
+	@#
+	@echo "################################################################################"
+	@echo "# Pulling Base Image php:"$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )"cli-alpine (platform: $(ARCH))"
+	@echo "################################################################################"
+	@echo "docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli-alpine"; \
+	while ! docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli-alpine; do sleep 1; done \
 
 
-# --------------------------------------------------------------------------------------------------
-# BUILD TARGETS
-# --------------------------------------------------------------------------------------------------
-build:
-ifeq ($(PCF),1)
-ifeq ($(PHP),latest)
-	@# PHP CS Fixer version 1 goes only up to PHP 7.1
-	docker build $(NO_CACHE) --build-arg PHP=7.1 --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-else
-	docker build $(NO_CACHE) --build-arg PHP=$(PHP) --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-endif
-else
-ifeq ($(PHP),latest)
-	docker build $(NO_CACHE) --build-arg PHP=$(PHP_LATEST) --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-else
-	docker build $(NO_CACHE) --build-arg PHP=$(PHP) --build-arg PCF=$(PCF) -t $(IMAGE) -f $(DIR)/$(FILE) $(DIR)
-endif
-endif
+# -------------------------------------------------------------------------------------------------
+#  Docker Targets
+# -------------------------------------------------------------------------------------------------
+.PHONY: build
+build: ARGS+=--build-arg PCF_VERSION=$(PCF_VERSION)
+build: ARGS+=--build-arg PHP_VERSION=$(shell echo "$(PHP_VERSION)-" | sed 's/latest-//g')
+build: docker-arch-build
 
-rebuild: _pull
-rebuild: NO_CACHE=--no-cache
-rebuild: build
+.PHONY: rebuild
+rebuild: ARGS+=--build-arg PCF_VERSION=$(PCF_VERSION)
+rebuild: ARGS+=--build-arg PHP_VERSION=$(shell echo "$(PHP_VERSION)-" | sed 's/latest-//g')
+rebuild: docker-arch-rebuild
+
+.PHONY: push
+push: docker-arch-push
 
 
-# --------------------------------------------------------------------------------------------------
-# TEST TARGETS
-# --------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+#  Manifest Targets
+# -------------------------------------------------------------------------------------------------
+.PHONY: manifest-create
+manifest-create: docker-manifest-create
+
+.PHONY: manifest-push
+manifest-push: docker-manifest-push
+
+
+# -------------------------------------------------------------------------------------------------
+#  Test Targets
+# -------------------------------------------------------------------------------------------------
+.PHONY: test
 test:
-	@$(MAKE) --no-print-directory _test-php-cs-fixer-version
-	@$(MAKE) --no-print-directory _test-php-version
-	@$(MAKE) --no-print-directory _test-run
+test: _test-php-cs-fixer-version
+test: _test-php-version
+test: _test-run
 
 .PHONY: _test-php-cs-fixer-version
 _test-php-cs-fixer-version:
 	@echo "------------------------------------------------------------"
-	@echo "- Testing correct phpcs version"
+	@echo "- Testing correct phpcsf version"
 	@echo "------------------------------------------------------------"
 	@echo "Fetching latest version from GitHub"; \
-	if [ "$(PCF)" = "latest" ]; then \
+	if [ "$(PCF_VERSION)" = "latest" ]; then \
 		LATEST="$$( \
 			curl -L -sS https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases \
 				| tac | tac \
-				| grep -Eo 'tag/v?[.0-9]+?\.[.0-9]+\"' \
+				| grep -Eo 'tag/v?[.0-9]+?\.[.0-9]+"' \
 				| grep -Eo '[.0-9]+' \
-				| sort -u \
+				| sort -V \
 				| tail -1 \
 		)"; \
 		echo "Testing for latest: $${LATEST}"; \
-		if ! docker run --rm $(IMAGE) --version | grep -E "^PHP CS Fixer (version)?$${LATEST}"; then \
+		if ! docker run --rm --platform $(ARCH) $(IMAGE):$(DOCKER_TAG) --version | grep -E "^PHP CS Fixer (version)?$${LATEST}"; then \
 			echo "Failed"; \
 			exit 1; \
 		fi; \
 	else \
-		echo "Testing for tag: $(PCF).x.x"; \
-		if ! docker run --rm $(IMAGE) --version | grep -E "^PHP CS Fixer (version[[:space:]])?$(PCF)\.[.0-9]+"; then \
+		echo "Testing for tag: $(PCF_VERSION).x.x"; \
+		if ! docker run --rm --platform $(ARCH) $(IMAGE):$(DOCKER_TAG) --version | grep -E "^PHP CS Fixer (version[[:space:]])?$(PCF_VERSION)\.[.0-9]+"; then \
 			echo "Failed"; \
 			exit 1; \
 		fi; \
@@ -114,15 +200,15 @@ _test-php-version: _get-php-version
 	@echo "------------------------------------------------------------"
 	@echo "- Testing correct PHP version"
 	@echo "------------------------------------------------------------"
-	@if [ "$(PCF)" = "1" ] && [ "$(PHP)" = "latest" ]; then \
+	@if [ "$(PCF_VERSION)" = "1" ] && [ "$(PHP_VERSION)" = "latest" ]; then \
 		echo "Testing for tag: 7.1.x"; \
-		if ! docker run --rm --entrypoint=php $(IMAGE) --version | head -1 | grep -E "^PHP[[:space:]]+7\.1\.[.0-9]+[[:space:]]"; then \
+		if ! docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(DOCKER_TAG) --version | head -1 | grep -E "^PHP[[:space:]]+7\.1\.[.0-9]+[[:space:]]"; then \
 			echo "Failed"; \
 			exit 1; \
 		fi; \
 	else \
 		echo "Testing for tag: $(CURRENT_PHP_VERSION)"; \
-		if ! docker run --rm --entrypoint=php $(IMAGE) --version | head -1 | grep -E "^PHP[[:space:]]+$(CURRENT_PHP_VERSION)([.0-9]+)?"; then \
+		if ! docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(DOCKER_TAG) --version | head -1 | grep -E "^PHP[[:space:]]+$(CURRENT_PHP_VERSION)([.0-9]+)?"; then \
 			echo "Failed"; \
 			exit 1; \
 		fi; \
@@ -132,49 +218,27 @@ _test-php-version: _get-php-version
 .PHONY: _test-run
 _test-run:
 	@echo "------------------------------------------------------------"
-	@echo "- Testing phpcs (success)"
+	@echo "- Testing phpcsf (success)"
 	@echo "------------------------------------------------------------"
-	@if ! docker run --rm -v $(CURRENT_DIR)/tests/ok:/data $(IMAGE) fix --dry-run --diff .; then \
+	@if ! docker run --rm --platform $(ARCH) -v $(CURRENT_DIR)/tests/ok:/data $(IMAGE):$(DOCKER_TAG) fix --dry-run --diff .; then \
 		echo "Failed"; \
 		exit 1; \
 	fi; \
 	echo "Success";
 	@echo "------------------------------------------------------------"
-	@echo "- Testing phpcs (failure)"
+	@echo "- Testing phpcsf (failure)"
 	@echo "------------------------------------------------------------"
-	@if docker run --rm -v $(CURRENT_DIR)/tests/fail:/data $(IMAGE) fix --dry-run --diff .; then \
+	@if docker run --rm --platform $(ARCH) -v $(CURRENT_DIR)/tests/fail:/data $(IMAGE):$(DOCKER_TAG) fix --dry-run --diff .; then \
 		echo "Failed"; \
 		exit 1; \
 	fi; \
 	echo "Success";
-
-
-# --------------------------------------------------------------------------------------------------
-# HELPER TARGETS
-# --------------------------------------------------------------------------------------------------
-.PHONY: _pull
-_pull:
-	@echo "Pull base image"
-ifeq ($(PCF),1)
-ifeq ($(PHP),latest)
-	@# PHP CS Fixer version 1 goes only up to PHP 7.1
-	docker pull php:7.1
-else
-	docker pull php:$(PHP)-cli-alpine
-endif
-else
-ifeq ($(PHP),latest)
-	docker pull php:$(PHP_LATEST)-cli-alpine
-else
-	docker pull php:$(PHP)-cli-alpine
-endif
-endif
 
 # Fetch latest available PHP version for cli-alpine
 .PHONY: _get-php-version
 _get-php-version:
 	$(eval CURRENT_PHP_VERSION = $(shell \
-		if [ "$(PHP)" = "latest" ]; then \
+		if [ "$(PHP_VERSION)" = "latest" ]; then \
 			curl -L -sS https://hub.docker.com/api/content/v1/products/images/php \
 				| tac | tac \
 				| grep -Eo '`[.0-9]+-cli-alpine' \
@@ -182,23 +246,6 @@ _get-php-version:
 				| sort -u \
 				| tail -1; \
 		else \
-			echo $(PHP); \
+			echo $(PHP_VERSION); \
 		fi; \
 	))
-
-
-# --------------------------------------------------------------------------------------------------
-# DEPLOY TARGETS
-# --------------------------------------------------------------------------------------------------
-.PHONY: tag
-tag:
-	docker tag $(IMAGE) $(IMAGE):$(TAG)
-
-.PHONY: login
-login:
-	yes | docker login --username $(USER) --password $(PASS)
-
-.PHONY: push
-push:
-	@$(MAKE) tag TAG=$(TAG)
-	docker push $(IMAGE):$(TAG)
