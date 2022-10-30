@@ -1,15 +1,13 @@
 # Docker image for `php-cs-fixer`
 
 [![Tag](https://img.shields.io/github/tag/cytopia/docker-php-cs-fixer.svg)](https://github.com/cytopia/docker-php-cs-fixer/releases)
-[![](https://images.microbadger.com/badges/version/cytopia/php-cs-fixer:latest.svg?&kill_cache=1)](https://microbadger.com/images/cytopia/php-cs-fixer:latest "php-cs-fixer")
-[![](https://images.microbadger.com/badges/image/cytopia/php-cs-fixer:latest.svg?&kill_cache=1)](https://microbadger.com/images/cytopia/php-cs-fixer:latest "php-cs-fixer")
-[![](https://img.shields.io/docker/pulls/cytopia/php-cs-fixer.svg)](https://hub.docker.com/r/cytopia/php-cs-fixer)
 [![](https://img.shields.io/badge/github-cytopia%2Fdocker--php--cs--fixer-red.svg)](https://github.com/cytopia/docker-php-cs-fixer "github.com/cytopia/docker-php-cs-fixer")
 [![License](https://img.shields.io/badge/license-MIT-%233DA639.svg)](https://opensource.org/licenses/MIT)
 
 [![lint](https://github.com/cytopia/docker-php-cs-fixer/workflows/lint/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Alint)
 [![build](https://github.com/cytopia/docker-php-cs-fixer/workflows/build/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Abuild)
 [![nightly](https://github.com/cytopia/docker-php-cs-fixer/workflows/nightly/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Anightly)
+
 
 > #### All [#awesome-ci](https://github.com/topics/awesome-ci) Docker images
 >
@@ -25,6 +23,7 @@
 > [goimports][gimp-git-lnk] **•**
 > [golint][glint-git-lnk] **•**
 > [jsonlint][jlint-git-lnk] **•**
+> [kubeval][kubeval-git-lnk] **•**
 > [linkcheck][linkcheck-git-lnk] **•**
 > [mypy][mypy-git-lnk] **•**
 > [php-cs-fixer][pcsf-git-lnk] **•**
@@ -40,72 +39,88 @@
 > [yamlfmt][yfmt-git-lnk] **•**
 > [yamllint][ylint-git-lnk]
 
-> #### All [#awesome-ci](https://github.com/topics/awesome-ci) Makefiles
->
-> Visit **[cytopia/makefiles](https://github.com/cytopia/makefiles)** for seamless project integration, minimum required best-practice code linting and CI.
+View **[Dockerfiles](https://github.com/cytopia/docker-php-cs-fixer/blob/master/Dockerfiles/)** on GitHub.
 
-View **[Dockerfile](https://github.com/cytopia/docker-php-cs-fixer/blob/master/Dockerfile)** on GitHub.
 
-[![Docker hub](http://dockeri.co/image/cytopia/php-cs-fixer?&kill_cache=1)](https://hub.docker.com/r/cytopia/php-cs-fixer)
+**Available Architectures:**  `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`
 
 Tiny Alpine-based multistage-build dockerized version of [php-cs-fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)<sup>[1]</sup>.
 The image is built nightly against multiple stable versions and pushed to Dockerhub.
 
 <sup>[1] Official project: https://github.com/FriendsOfPHP/PHP-CS-Fixer</sup>
 
+## :whale: Available Docker image versions
 
-## Available Docker image versions
+[![](https://img.shields.io/docker/pulls/cytopia/php-cs-fixer.svg)](https://hub.docker.com/r/cytopia/php-cs-fixer)
+[![Docker](https://badgen.net/badge/icon/:latest?icon=docker&label=cytopia/php-cs-fixer)](https://hub.docker.com/r/cytopia/php-cs-fixer)
 
-Docker images for PHP Coding Standards Fixer come with all available PHP versions. In doubt use `latest` tag.
+#### Rolling releaess
 
-#### Latest stable php-cs-fixer version
-| Docker tag      | php-cs-fixer version  | PHP version           |
-|-----------------|-----------------------|-----------------------|
-| `latest`        | latest stable         | latest stable         |
-| `latest-php8.0` | latest stable         | latest stable `8.0.x` |
-| `latest-php7.4` | latest stable         | latest stable `7.4.x` |
-| `latest-php7.3` | latest stable         | latest stable `7.3.x` |
-| `latest-php7.2` | latest stable         | latest stable `7.2.x` |
-| `latest-php7.1` | latest stable         | latest stable `7.1.x` |
+The following Docker image tags are rolling releases and are built and updated every night.
 
-#### Latest stable php-cs-fixer `3.x.x` version
-| Docker tag      | php-cs-fixer version  | PHP version           |
-|-----------------|-----------------------|-----------------------|
-| `3`             | latest stable `3.x.x` | latest stable         |
-| `3-php8.0`      | latest stable `3.x.x` | latest stable `8.0.x` |
-| `3-php7.4`      | latest stable `3.x.x` | latest stable `7.4.x` |
-| `3-php7.3`      | latest stable `3.x.x` | latest stable `7.3.x` |
-| `3-php7.2`      | latest stable `3.x.x` | latest stable `7.2.x` |
-| `3-php7.1`      | latest stable `3.x.x` | latest stable `7.1.x` |
-
-#### Latest stable php-cs-fixer `2.x.x` version
-| Docker tag      | php-cs-fixer version  | PHP version           |
-|-----------------|-----------------------|-----------------------|
-| `2`             | latest stable `2.x.x` | latest stable         |
-| `2-php8.0`      | latest stable `2.x.x` | latest stable `8.0.x` |
-| `2-php7.4`      | latest stable `2.x.x` | latest stable `7.4.x` |
-| `2-php7.3`      | latest stable `2.x.x` | latest stable `7.3.x` |
-| `2-php7.2`      | latest stable `2.x.x` | latest stable `7.2.x` |
-| `2-php7.1`      | latest stable `2.x.x` | latest stable `7.1.x` |
-| `2-php7.0`      | latest stable `2.x.x` | latest stable `7.0.x` |
-| `2-php5.6`      | latest stable `2.x.x` | latest stable `5.6.x` |
-
-#### Latest stable php-cs-fixer `1.x.x` version
-| Docker tag      | php-cs-fixer version  | PHP version           |
-|-----------------|-----------------------|-----------------------|
-| `1`             | latest stable `1.x.x` | latest stable supported version |
-| `1-php7.1`      | latest stable `1.x.x` | latest stable `7.1.x` |
-| `1-php7.0`      | latest stable `1.x.x` | latest stable `7.0.x` |
-| `1-php5.6`      | latest stable `1.x.x` | latest stable `5.6.x` |
+[![nightly](https://github.com/cytopia/docker-php-cs-fixer/workflows/nightly/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Anightly)
 
 
-## Docker mounts
+| Docker Tag            | Git Ref      | PHPCF        | PHP        | Available Architectures                      |
+|-----------------------|--------------|--------------|------------|----------------------------------------------|
+| **`latest`**          | master       | latest       | latest     | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `latest-php8.1`       | master       | latest       | **`8.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `latest-php8.0`       | master       | latest       | **`8.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `latest-php7.4`       | master       | latest       | **`7.4`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+|                       |              |              |            |                                              |
+| **`3`**               | master       | **`3.x.x`**  | latest     | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `3-php8.1`            | master       | **`3.x.x`**  | **`8.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `3-php8.0`            | master       | **`3.x.x`**  | **`8.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `3-php7.4`            | master       | **`3.x.x`**  | **`7.4`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+|                       |              |              |            |                                              |
+| **`2`**               | master       | **`2.x.x`**  | latest     | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php8.1`            | master       | **`2.x.x`**  | **`8.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php8.0`            | master       | **`2.x.x`**  | **`8.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.4`            | master       | **`2.x.x`**  | **`7.4`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.3`            | master       | **`2.x.x`**  | **`7.3`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.2`            | master       | **`2.x.x`**  | **`7.2`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.1`            | master       | **`2.x.x`**  | **`7.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.0`            | master       | **`2.x.x`**  | **`7.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php5.6`            | master       | **`2.x.x`**  | **`5.6`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
 
-The working directory inside the Docker container is **`/data/`** and should be mounted locally to
-the root of your project.
+#### Point in time releases
+
+The following Docker image tags are built once and can be used for reproducible builds. Its version never changes so you will have to update tags in your pipelines from time to time in order to stay up-to-date.
+
+[![build](https://github.com/cytopia/docker-php-cs-fixer/workflows/build/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Abuild)
 
 
-## Usage
+| Docker Tag            | Git Ref      | PHPCF        | PHP        | Available Architectures                      |
+|-----------------------|--------------|--------------|------------|----------------------------------------------|
+| **`latest-<tag>`**    | git: `<tag>` | latest       | latest     | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `latest-php8.1-<tag>` | git: `<tag>` | latest       | **`8.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `latest-php8.0-<tag>` | git: `<tag>` | latest       | **`8.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `latest-php7.4-<tag>` | git: `<tag>` | latest       | **`7.4`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+|                       | git: `<tag>` |              |            |                                              |
+| **`3-<tag>`**         | git: `<tag>` | **`3.x.x`**  | latest     | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `3-php8.1-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`8.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `3-php8.0-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`8.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `3-php7.4-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`7.4`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+|                       | git: `<tag>` |              |            |                                              |
+| **`2-<tag>`**         | git: `<tag>` | **`2.x.x`**  | latest     | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php8.1-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`8.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php8.0-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`8.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.4-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.4`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.3-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.3`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.2-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.2`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.1-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.1`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php7.0-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.0`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+| `2-php5.6-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`5.6`**  | `amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6` |
+
+> Where `<tag>` refers to the chosen git tag from this repository.
+
+
+## :open_file_folder: Docker mounts
+
+The working directory inside the Docker container is **`/data/`** and should be mounted locally.
+
+
+## :computer: Usage
 
 ### Generic
 ```bash
@@ -215,7 +230,7 @@ script:
 ```
 
 
-## Related [#awesome-ci](https://github.com/topics/awesome-ci) projects
+## :arrows_counterclockwise: Related [#awesome-ci](https://github.com/topics/awesome-ci) projects
 
 ### Docker images
 
@@ -234,6 +249,7 @@ linter below for reproducible local or remote CI tests:
 | [golint][glint-git-lnk]          | [![glint-hub-img]][glint-hub-lnk]     | Go         | Lint Go code |
 | [eslint][elint-git-lnk]          | [![elint-hub-img]][elint-hub-lnk]     | Javascript | Lint Javascript code |
 | [jsonlint][jlint-git-lnk]        | [![jlint-hub-img]][jlint-hub-lnk]     | JSON       | Lint JSON files **<sup>[1]</sup>** |
+| [kubeval][kubeval-git-lnk]       | [![kubeval-hub-img]][kubeval-hub-lnk] | K8s        | Lint Kubernetes files |
 | [checkmake][cm-git-lnk]          | [![cm-hub-img]][cm-hub-lnk]           | Make       | Lint Makefiles |
 | [phpcbf][pcbf-git-lnk]           | [![pcbf-hub-img]][pcbf-hub-lnk]       | PHP        | PHP Code Beautifier and Fixer |
 | [phpcs][pcs-git-lnk]             | [![pcs-hub-img]][pcs-hub-lnk]         | PHP        | PHP Code Sniffer |
@@ -276,6 +292,10 @@ linter below for reproducible local or remote CI tests:
 [alint-git-lnk]: https://github.com/cytopia/docker-ansible-lint
 [alint-hub-img]: https://img.shields.io/docker/pulls/cytopia/ansible-lint.svg
 [alint-hub-lnk]: https://hub.docker.com/r/cytopia/ansible-lint
+
+[kubeval-git-lnk]: https://github.com/cytopia/docker-kubeval
+[kubeval-hub-img]: https://img.shields.io/docker/pulls/cytopia/kubeval.svg
+[kubeval-hub-lnk]: https://hub.docker.com/r/cytopia/kubeval
 
 [gfmt-git-lnk]: https://github.com/cytopia/docker-gofmt
 [gfmt-hub-img]: https://img.shields.io/docker/pulls/cytopia/gofmt.svg
@@ -364,7 +384,8 @@ Visit **[cytopia/makefiles](https://github.com/cytopia/makefiles)** for dependen
 The provided Makefiles will only require GNU Make and Docker itself removing the need to install anything else.
 
 
-## License
+## :page_facing_up: License
+
 
 **[MIT License](LICENSE)**
 
