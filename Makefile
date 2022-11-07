@@ -16,6 +16,8 @@ include $(MAKEFILES)
 # Set default Target
 .DEFAULT_GOAL := help
 
+DOCKER_PULL_VARIABLES = PHP_IMG_TAG=$(PHP_IMG_TAG)
+
 
 # -------------------------------------------------------------------------------------------------
 # Default configuration
@@ -32,12 +34,20 @@ FILE       = Dockerfile.${FLAVOUR}
 DIR        = Dockerfiles
 
 # Extract PHP- and PCF- version from VERSION string
+PHP_IMG_TAG = "cli-alpine"
 ifeq ($(strip $(VERSION)),latest)
 	PHP_VERSION = latest
 	PCF_VERSION = latest
+	PHP_IMG_TAG = "cli-alpine"
 else
 	PHP_VERSION = $(subst PHP-,,$(shell echo "$(VERSION)" | grep -Eo 'PHP-([.0-9]+|latest)'))
 	PCF_VERSION = $(subst PCF-,,$(shell echo "$(VERSION)" | grep -Eo 'PCF-([.0-9]+|latest)'))
+	PHP_IMG_TAG = $(PHP_VERSION)-cli-alpine
+endif
+
+# Extract Image version
+ifeq ($(strip $(PHP_VERSION)),latest)
+	PHP_IMG_TAG = "cli-alpine"
 endif
 
 # Building from master branch: Tag == 'latest'
@@ -89,10 +99,6 @@ FL_IGNORES  = .git/,.github/,tests/
 SC_IGNORES  = .git/,.github/,tests/
 JL_IGNORES  = .git/,.github/,./tests/
 
-out:
-	@echo "PHP: $(subst PHP-,,$(shell echo "$(VERSION)" | grep -Eo 'PHP-[.0-9]+'))"
-	@echo "PCF: $(subst PCF-,,$(shell echo "$(VERSION)" | grep -Eo 'PCF-[.0-9]+'))"
-
 
 # -------------------------------------------------------------------------------------------------
 #  Default Target
@@ -113,34 +119,16 @@ help:
 
 
 # -------------------------------------------------------------------------------------------------
-#  Target Overrides
-# -------------------------------------------------------------------------------------------------
-.PHONY: docker-pull-base-image
-docker-pull-base-image:
-	@echo "################################################################################"
-	@echo "# Pulling Base Image php:"$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )"cli (platform: $(ARCH))"
-	@echo "################################################################################"
-	@echo "docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli"; \
-	while ! docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli; do sleep 1; done
-	@#
-	@echo "################################################################################"
-	@echo "# Pulling Base Image php:"$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )"cli-alpine (platform: $(ARCH))"
-	@echo "################################################################################"
-	@echo "docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli-alpine"; \
-	while ! docker pull --platform $(ARCH) php:$$( echo "$(PHP_VERSION)-" | sed 's/latest-//g' )cli-alpine; do sleep 1; done \
-
-
-# -------------------------------------------------------------------------------------------------
 #  Docker Targets
 # -------------------------------------------------------------------------------------------------
 .PHONY: build
 build: ARGS+=--build-arg PCF_VERSION=$(PCF_VERSION)
-build: ARGS+=--build-arg PHP_VERSION=$(shell echo "$(PHP_VERSION)-" | sed 's/latest-//g')
+build: ARGS+=--build-arg PHP_IMG_TAG=$(PHP_IMG_TAG)
 build: docker-arch-build
 
 .PHONY: rebuild
 rebuild: ARGS+=--build-arg PCF_VERSION=$(PCF_VERSION)
-rebuild: ARGS+=--build-arg PHP_VERSION=$(shell echo "$(PHP_VERSION)-" | sed 's/latest-//g')
+rebuild: ARGS+=--build-arg PHP_IMG_TAG=$(PHP_IMG_TAG)
 rebuild: docker-arch-rebuild
 
 .PHONY: push

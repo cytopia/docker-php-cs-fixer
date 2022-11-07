@@ -1,11 +1,12 @@
-ARG PHP_VERSION
-FROM php:${PHP_VERSION}cli as builder
+ARG PHP_IMG_TAG
+FROM php:${PHP_IMG_TAG} as builder
 
 # Install build dependencies
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	&& apk add --no-cache \
 		ca-certificates \
+		# coreutils add 'sort -V'
+		coreutils \
 		curl \
 		git \
 	&& git clone https://github.com/FriendsOfPHP/PHP-CS-Fixer
@@ -21,14 +22,13 @@ RUN set -eux \
 	&& echo "Version: ${VERSION}" \
 	&& curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/${VERSION}/php-cs-fixer.phar -o /php-cs-fixer \
 	&& chmod +x /php-cs-fixer \
-	&& mv /php-cs-fixer /usr/bin/php-cs-fixer
-
-RUN set -eux \
+	&& mv /php-cs-fixer /usr/bin/php-cs-fixer \
+	\
 	&& php-cs-fixer --version
 
 
-ARG PHP_VERSION
-FROM php:${PHP_VERSION}cli-alpine as production
+ARG PHP_IMG_TAG
+FROM php:${PHP_IMG_TAG} as production
 LABEL \
 	maintainer="cytopia <cytopia@everythingcli.org>" \
 	repo="https://github.com/cytopia/docker-php-cs-fixer"
