@@ -18,11 +18,13 @@ env:
             "latest",
 
             "PCF-latest  PHP-latest",
+            "PCF-latest  PHP-8.2",
             "PCF-latest  PHP-8.1",
             "PCF-latest  PHP-8.0",
             "PCF-latest  PHP-7.4",
 
             "PCF-3  PHP-latest",
+            "PCF-3  PHP-8.2",
             "PCF-3  PHP-8.1",
             "PCF-3  PHP-8.0",
             "PCF-3  PHP-7.4",
