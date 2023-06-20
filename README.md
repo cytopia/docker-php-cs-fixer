@@ -61,27 +61,30 @@ The following Docker image tags are rolling releases and are built and updated e
 [![nightly](https://github.com/cytopia/docker-php-cs-fixer/workflows/nightly/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Anightly)
 
 
-| Docker Tag            | Git Ref      | PHPCF        | PHP        | Available Architectures                      |
-|-----------------------|--------------|--------------|------------|----------------------------------------------|
-| **`latest`**          | master       | latest       | latest     | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `latest-php8.1`       | master       | latest       | **`8.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `latest-php8.0`       | master       | latest       | **`8.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `latest-php7.4`       | master       | latest       | **`7.4`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-|                       |              |              |            |                                              |
-| **`3`**               | master       | **`3.x.x`**  | latest     | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `3-php8.1`            | master       | **`3.x.x`**  | **`8.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `3-php8.0`            | master       | **`3.x.x`**  | **`8.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `3-php7.4`            | master       | **`3.x.x`**  | **`7.4`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-|                       |              |              |            |                                              |
-| **`2`**               | master       | **`2.x.x`**  | latest     | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php8.1`            | master       | **`2.x.x`**  | **`8.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php8.0`            | master       | **`2.x.x`**  | **`8.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.4`            | master       | **`2.x.x`**  | **`7.4`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.3`            | master       | **`2.x.x`**  | **`7.3`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.2`            | master       | **`2.x.x`**  | **`7.2`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.1`            | master       | **`2.x.x`**  | **`7.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.0`            | master       | **`2.x.x`**  | **`7.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
-| `2-php5.6`            | master       | **`2.x.x`**  | **`5.6`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
+| Docker Tag      | Git Ref      | PHPCF        | PHP       | Available Architectures                      |
+|-----------------|--------------|--------------|-----------|----------------------------------------------|
+| **`latest`**    | master       | latest       | latest    | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php8.2` | master       | latest       | **`8.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php8.1` | master       | latest       | **`8.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php8.0` | master       | latest       | **`8.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php7.4` | master       | latest       | **`7.4`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+|                 |              |              |           |                                              |
+| **`3`**         | master       | **`3.x.x`**  | latest    | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php8.2`      | master       | **`3.x.x`**  | **`8.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php8.1`      | master       | **`3.x.x`**  | **`8.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php8.0`      | master       | **`3.x.x`**  | **`8.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php7.4`      | master       | **`3.x.x`**  | **`7.4`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+|                 |              |              |           |                                              |
+| **`2`**         | master       | **`2.x.x`**  | latest    | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php8.2`      | master       | **`2.x.x`**  | **`8.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php8.1`      | master       | **`2.x.x`**  | **`8.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php8.0`      | master       | **`2.x.x`**  | **`8.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.4`      | master       | **`2.x.x`**  | **`7.4`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.3`      | master       | **`2.x.x`**  | **`7.3`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.2`      | master       | **`2.x.x`**  | **`7.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.1`      | master       | **`2.x.x`**  | **`7.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.0`      | master       | **`2.x.x`**  | **`7.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
+| `2-php5.6`      | master       | **`2.x.x`**  | **`5.6`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
 
 #### Point in time releases
 
@@ -90,27 +93,30 @@ The following Docker image tags are built once and can be used for reproducible 
 [![build](https://github.com/cytopia/docker-php-cs-fixer/workflows/build/badge.svg)](https://github.com/cytopia/docker-php-cs-fixer/actions?query=workflow%3Abuild)
 
 
-| Docker Tag            | Git Ref      | PHPCF        | PHP        | Available Architectures                      |
-|-----------------------|--------------|--------------|------------|----------------------------------------------|
-| **`latest-<tag>`**    | git: `<tag>` | latest       | latest     | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `latest-php8.1-<tag>` | git: `<tag>` | latest       | **`8.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `latest-php8.0-<tag>` | git: `<tag>` | latest       | **`8.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `latest-php7.4-<tag>` | git: `<tag>` | latest       | **`7.4`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-|                       |              |              |            |                                              |
-| **`3-<tag>`**         | git: `<tag>` | **`3.x.x`**  | latest     | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `3-php8.1-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`8.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `3-php8.0-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`8.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `3-php7.4-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`7.4`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-|                       |              |              |            |                                              |
-| **`2-<tag>`**         | git: `<tag>` | **`2.x.x`**  | latest     | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php8.1-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`8.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php8.0-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`8.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.4-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.4`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.3-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.3`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.2-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.2`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.1-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.1`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
-| `2-php7.0-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.0`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
-| `2-php5.6-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`5.6`**  | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
+| Docker Tag            | Git Ref      | PHPCF        | PHP       | Available Architectures                      |
+|-----------------------|--------------|--------------|-----------|----------------------------------------------|
+| **`latest-<tag>`**    | git: `<tag>` | latest       | latest    | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php8.2-<tag>` | git: `<tag>` | latest       | **`8.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php8.1-<tag>` | git: `<tag>` | latest       | **`8.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php8.0-<tag>` | git: `<tag>` | latest       | **`8.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `latest-php7.4-<tag>` | git: `<tag>` | latest       | **`7.4`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+|                       |              |              |           |                                              |
+| **`3-<tag>`**         | git: `<tag>` | **`3.x.x`**  | latest    | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php8.2-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`8.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php8.1-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`8.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php8.0-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`8.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `3-php7.4-<tag>`      | git: `<tag>` | **`3.x.x`**  | **`7.4`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+|                       |              |              |           |                                              |
+| **`2-<tag>`**         | git: `<tag>` | **`2.x.x`**  | latest    | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php8.2-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`8.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php8.1-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`8.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php8.0-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`8.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.4-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.4`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.3-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.3`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.2-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.2`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.1-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.1`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`, `s390x`</sup> |
+| `2-php7.0-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`7.0`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
+| `2-php5.6-<tag>`      | git: `<tag>` | **`2.x.x`**  | **`5.6`** | <sup>`amd64`, `i386`, `arm64`, `arm/v7`, `arm/v6`, `ppc64le`</sup> |
 
 > Where `<tag>` refers to the chosen git tag from this repository.
 
